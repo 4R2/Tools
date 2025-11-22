@@ -1,2 +1,2 @@
 # Tools
-Here is some tools I use while working on targets
+Here are some tools I use while working on targets
