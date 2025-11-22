@@ -5,7 +5,7 @@ then echo "How to use : ./sub_finder.sh <domain>"
 echo "Ex: ./sub_finder.sh www.facebook.com"
 
 else
-wget $1 2> /dev/null && less index.html | grep "href=" | cut -d ":" -f 2 | cut -d "/" -f 3 | grep "mega" | cut -d '"' -f 1 | grep -v "$1" | uniq > sub.txt
+wget $1 2> /dev/null && less index.html | grep "href=" | cut -d ":" -f 2 | cut -d "/" -f 3 | cut -d '"' -f 1 | grep -v "$1" | uniq > sub.txt
 
 
 for sub in $(cat sub.txt)
